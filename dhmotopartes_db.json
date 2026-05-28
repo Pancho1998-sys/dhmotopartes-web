@@ -1,0 +1,368 @@
+{
+    "products": [
+        {
+            "id": "p1",
+            "sku": "REP-BUJ-NGK",
+            "name": "Bujía NGK CPR8EA-9 (Honda Titan/FZ16)",
+            "category": "Sistema Eléctrico",
+            "cost": 450,
+            "price": 850,
+            "stock": 42,
+            "stockMin": 10,
+            "location": "Estante B-1",
+            "image": ""
+        },
+        {
+            "id": "p2",
+            "sku": "REP-FIL-ACE",
+            "name": "Filtro de Aceite Honda Tornado XR 250",
+            "category": "Repuestos de Motor",
+            "cost": 650,
+            "price": 1200,
+            "stock": 22,
+            "stockMin": 5,
+            "location": "Estante A-4",
+            "image": ""
+        },
+        {
+            "id": "p3",
+            "sku": "REP-PAS-FRE",
+            "name": "Pastillas de Freno Cobreq YBR 125/Fazer",
+            "category": "Frenos",
+            "cost": 1100,
+            "price": 2200,
+            "stock": 15,
+            "stockMin": 8,
+            "location": "Estante C-2",
+            "image": ""
+        },
+        {
+            "id": "p4",
+            "sku": "REP-KIT-TRA",
+            "name": "Kit Transmisión Completo Rouser NS 200 (DID)",
+            "category": "Transmisión",
+            "cost": 7800,
+            "price": 12500,
+            "stock": 4,
+            "stockMin": 3,
+            "location": "Estante D-1",
+            "image": ""
+        },
+        {
+            "id": "p5",
+            "sku": "HER-LLA-ALL",
+            "name": "Juego de Llaves Allen L-Wrench (9 Piezas)",
+            "category": "Herramientas",
+            "cost": 2700,
+            "price": 4500,
+            "stock": 12,
+            "stockMin": 4,
+            "location": "Cajón 1",
+            "image": ""
+        },
+        {
+            "id": "p6",
+            "sku": "HER-EXT-VOL",
+            "name": "Extractor de Volante Magneto Universal",
+            "category": "Herramientas",
+            "cost": 3800,
+            "price": 6200,
+            "stock": 2,
+            "stockMin": 2,
+            "location": "Estante D-4",
+            "image": ""
+        },
+        {
+            "id": "p7",
+            "sku": "ACC-CAS-REV",
+            "name": "Casco Rebatible Hawk Revo Negro Mate L",
+            "category": "Accesorios",
+            "cost": 19000,
+            "price": 28900,
+            "stock": 6,
+            "stockMin": 2,
+            "location": "Exhibidor 1",
+            "image": ""
+        },
+        {
+            "id": "p8",
+            "sku": "REP-CAB-EMB",
+            "name": "Cable de Embrague Corven Triax 150",
+            "category": "Transmisión",
+            "cost": 500,
+            "price": 1100,
+            "stock": 0,
+            "stockMin": 5,
+            "location": "Estante B-3",
+            "image": ""
+        },
+        {
+            "id": "p9",
+            "sku": "REP-BTE-YUAS",
+            "name": "Batería Yuasa 12V 7Ah YTX7L-BS",
+            "category": "Sistema Eléctrico",
+            "cost": 13500,
+            "price": 19500,
+            "stock": 9,
+            "stockMin": 3,
+            "location": "Baterías-A",
+            "image": ""
+        },
+        {
+            "id": "p10",
+            "sku": "HER-COR-CAD",
+            "name": "Corta Cadena Profesional Mecánico",
+            "category": "Herramientas",
+            "cost": 2000,
+            "price": 3400,
+            "stock": 15,
+            "stockMin": 5,
+            "location": "Cajón 2",
+            "image": ""
+        },
+        {
+            "id": "p_1779466065302",
+            "sku": "1011495",
+            "name": "CARBURADOR  110 KM POWER",
+            "category": "Repuestos de Motor",
+            "cost": 12273,
+            "price": 25000,
+            "stock": 2,
+            "stockMin": 1,
+            "location": "",
+            "image": ""
+        }
+    ],
+    "cart": [],
+    "sales": [
+        {
+            "id": "V-1006",
+            "date": "2026-05-16T16:02:15.402Z",
+            "customerId": "c1",
+            "customerName": "Martín Gómez (Taller El Rayo)",
+            "items": [
+                {
+                    "id": "p1",
+                    "name": "Bujía NGK CPR8EA-9",
+                    "price": 850,
+                    "quantity": 4
+                },
+                {
+                    "id": "p4",
+                    "name": "Kit Transmisión NS 200",
+                    "price": 12500,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 15900,
+            "discount": 0,
+            "tax": 2385,
+            "total": 32000,
+            "paymentMethod": "card",
+            "amountReceived": 18285,
+            "changeReturned": 0,
+            "status": "completed"
+        },
+        {
+            "id": "V-1005",
+            "date": "2026-05-17T16:02:15.402Z",
+            "customerId": "c1",
+            "customerName": "Martín Gómez (Taller El Rayo)",
+            "items": [
+                {
+                    "id": "p1",
+                    "name": "Bujía NGK CPR8EA-9",
+                    "price": 850,
+                    "quantity": 4
+                },
+                {
+                    "id": "p4",
+                    "name": "Kit Transmisión NS 200",
+                    "price": 12500,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 15900,
+            "discount": 0,
+            "tax": 2385,
+            "total": 45000,
+            "paymentMethod": "card",
+            "amountReceived": 18285,
+            "changeReturned": 0,
+            "status": "completed"
+        },
+        {
+            "id": "V-1004",
+            "date": "2026-05-18T16:02:15.402Z",
+            "customerId": "c1",
+            "customerName": "Martín Gómez (Taller El Rayo)",
+            "items": [
+                {
+                    "id": "p1",
+                    "name": "Bujía NGK CPR8EA-9",
+                    "price": 850,
+                    "quantity": 4
+                },
+                {
+                    "id": "p4",
+                    "name": "Kit Transmisión NS 200",
+                    "price": 12500,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 15900,
+            "discount": 0,
+            "tax": 2385,
+            "total": 18000,
+            "paymentMethod": "card",
+            "amountReceived": 18285,
+            "changeReturned": 0,
+            "status": "completed"
+        },
+        {
+            "id": "V-1003",
+            "date": "2026-05-19T16:02:15.402Z",
+            "customerId": "c1",
+            "customerName": "Martín Gómez (Taller El Rayo)",
+            "items": [
+                {
+                    "id": "p1",
+                    "name": "Bujía NGK CPR8EA-9",
+                    "price": 850,
+                    "quantity": 4
+                },
+                {
+                    "id": "p4",
+                    "name": "Kit Transmisión NS 200",
+                    "price": 12500,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 15900,
+            "discount": 0,
+            "tax": 2385,
+            "total": 62000,
+            "paymentMethod": "card",
+            "amountReceived": 18285,
+            "changeReturned": 0,
+            "status": "completed"
+        },
+        {
+            "id": "V-1002",
+            "date": "2026-05-20T16:02:15.402Z",
+            "customerId": "c1",
+            "customerName": "Martín Gómez (Taller El Rayo)",
+            "items": [
+                {
+                    "id": "p1",
+                    "name": "Bujía NGK CPR8EA-9",
+                    "price": 850,
+                    "quantity": 4
+                },
+                {
+                    "id": "p4",
+                    "name": "Kit Transmisión NS 200",
+                    "price": 12500,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 15900,
+            "discount": 0,
+            "tax": 2385,
+            "total": 41000,
+            "paymentMethod": "card",
+            "amountReceived": 18285,
+            "changeReturned": 0,
+            "status": "completed"
+        },
+        {
+            "id": "V-1001",
+            "date": "2026-05-21T16:02:15.402Z",
+            "customerId": "c1",
+            "customerName": "Martín Gómez (Taller El Rayo)",
+            "items": [
+                {
+                    "id": "p1",
+                    "name": "Bujía NGK CPR8EA-9",
+                    "price": 850,
+                    "quantity": 4
+                },
+                {
+                    "id": "p4",
+                    "name": "Kit Transmisión NS 200",
+                    "price": 12500,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 15900,
+            "discount": 0,
+            "tax": 2385,
+            "total": 83000,
+            "paymentMethod": "card",
+            "amountReceived": 18285,
+            "changeReturned": 0,
+            "status": "completed"
+        },
+        {
+            "id": "V-1000",
+            "date": "2026-05-22T16:02:15.402Z",
+            "customerId": "c1",
+            "customerName": "Martín Gómez (Taller El Rayo)",
+            "items": [
+                {
+                    "id": "p1",
+                    "name": "Bujía NGK CPR8EA-9",
+                    "price": 850,
+                    "quantity": 4
+                },
+                {
+                    "id": "p4",
+                    "name": "Kit Transmisión NS 200",
+                    "price": 12500,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 15900,
+            "discount": 0,
+            "tax": 2385,
+            "total": 54000,
+            "paymentMethod": "card",
+            "amountReceived": 18285,
+            "changeReturned": 0,
+            "status": "completed"
+        }
+    ],
+    "customers": [
+        {
+            "id": "c1",
+            "name": "Martín Gómez (Taller El Rayo)",
+            "phone": "+54 9 11 4444-5555",
+            "email": "tallerelrayo@gmail.com",
+            "points": 150,
+            "dateRegistered": "2026-01-15"
+        },
+        {
+            "id": "c2",
+            "name": "Sofía Rodríguez",
+            "phone": "+54 9 11 9999-8888",
+            "email": "sofia.rod@outlook.com",
+            "points": 45,
+            "dateRegistered": "2026-03-22"
+        },
+        {
+            "id": "c3",
+            "name": "Juan Carlos Depetris",
+            "phone": "+54 9 11 3333-2222",
+            "email": "jc.depetris@yahoo.com.ar",
+            "points": 10,
+            "dateRegistered": "2026-04-10"
+        }
+    ],
+    "settings": {
+        "storeName": "DHMotopartes",
+        "storeAddress": "Av. Libertador 2450, Ciudad",
+        "storePhone": "+54 9 11 5555-1234",
+        "currency": "$",
+        "storeTax": 15
+    }
+}

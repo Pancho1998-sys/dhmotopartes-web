@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DH Motopartes - Catálogo de Repuestos y Herramientas</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Catálogo online oficial de DH Motopartes. Buscá repuestos, herramientas y accesorios para tu moto y realizá tu pedido directamente por WhatsApp.">
+    <meta name="keywords" content="motopartes, repuestos de moto, herramientas, frenos, transmision, baterias, accesorios, repuestos honda, yamaha">
+    <meta name="author" content="DH Motopartes">
+    
+    <!-- Google Fonts: Outfit (headings) and Inter (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Core Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-badge">DH</div>
+                <span class="logo-text">MOTOPARTES</span>
+            </div>
+            
+            <nav class="header-nav">
+                <a href="#catalogo" class="nav-link">Catálogo</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="cart-toggle-btn" id="cart-toggle" onclick="toggleCart()">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="cart-badge" id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2"></div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <span class="hero-tagline"><span class="red-dot"></span> CATÁLOGO DIGITAL OFICIAL</span>
+                <h1 class="hero-title">Equipá tu Moto con Repuestos de Alta Gama</h1>
+                <p class="hero-description">Explorá nuestro catálogo en tiempo real. Seleccioná los repuestos o herramientas que necesitás y enviá tu pedido directamente por WhatsApp para coordinar retiro o envío.</p>
+                <div class="hero-buttons">
+                    <a href="#catalogo" class="btn btn-primary btn-large">
+                        <span>Ver Repuestos</span>
+                        <i data-lucide="chevron-right"></i>
+                    </a>
+                    <a href="#contacto" class="btn btn-secondary btn-large">¿Dónde estamos?</a>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="motorcycle-backdrop">
+                    <!-- Premium visual representation of motorcycle mechanics using CSS styling -->
+                    <div class="engine-cog">
+                        <i data-lucide="settings" class="cog-icon"></i>
+                    </div>
+                    <div class="spark-line"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Catalog Section -->
+    <main class="catalog-section" id="catalogo">
+        <div class="section-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Nuestros Repuestos y Herramientas</h2>
+                    <p class="section-subtitle">Buscá y filtrá para encontrar lo que tu moto necesita</p>
+                </div>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="filters-container">
+                <div class="search-box">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="catalog-search" placeholder="Buscar por repuesto, modelo de moto o SKU..." oninput="filterCatalog()">
+                </div>
+                
+                <div class="filter-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="filter-stock" onchange="filterCatalog()">
+                        <span class="checkmark"></span>
+                        Solo repuestos disponibles (con stock)
+                    </label>
+                </div>
+            </div>
+
+            <!-- Category Scroll list -->
+            <div class="categories-scroll-wrapper">
+                <div class="categories-list" id="category-tabs">
+                    <button class="category-tab active" onclick="selectCategory('')">Todos</button>
+                    <button class="category-tab" onclick="selectCategory('Sistema Eléctrico')">Sistema Eléctrico</button>
+                    <button class="category-tab" onclick="selectCategory('Repuestos de Motor')">Repuestos de Motor</button>
+                    <button class="category-tab" onclick="selectCategory('Frenos')">Frenos</button>
+                    <button class="category-tab" onclick="selectCategory('Transmisión')">Transmisión</button>
+                    <button class="category-tab" onclick="selectCategory('Herramientas')">Herramientas</button>
+                    <button class="category-tab" onclick="selectCategory('Accesorios')">Accesorios</button>
+                </div>
+            </div>
+
+            <!-- Catalog Grid -->
+            <div class="products-grid" id="products-grid">
+                <!-- Loaded dynamically by JS -->
+                <div class="grid-loading">
+                    <div class="spinner"></div>
+                    <p>Cargando catálogo oficial...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Slide-out Shopping Cart Drawer -->
+    <div class="cart-drawer-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3 class="cart-drawer-title">
+                <i data-lucide="shopping-cart" style="color: var(--rose-red);"></i>
+                Mi Pedido
+            </h3>
+            <button class="btn-close-drawer" onclick="toggleCart()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        
+        <div class="cart-drawer-content">
+            <!-- Cart Items List -->
+            <div class="cart-items-list" id="cart-items-list">
+                <!-- Loaded dynamically by JS -->
+                <div class="cart-empty-state">
+                    <i data-lucide="shopping-bag" class="empty-icon"></i>
+                    <p class="empty-title">Tu carrito está vacío</p>
+                    <p class="empty-text">Explorá el catálogo y agregá los repuestos que necesitás consultar.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cart-drawer-footer">
+            <div class="cart-summary-row">
+                <span>Items:</span>
+                <span id="cart-items-total-qty" style="font-weight: 600;">0</span>
+            </div>
+            <div class="cart-summary-row total-row">
+                <span>Total Estimado:</span>
+                <span class="total-price" id="cart-total-price">$0.00</span>
+            </div>
+            <p class="shipping-disclaimer">
+                <i data-lucide="info" style="width: 12px; height: 12px; flex-shrink: 0;"></i>
+                El stock y precio final serán confirmados por WhatsApp.
+            </p>
+            <button class="btn btn-primary btn-full-width" id="btn-checkout" onclick="checkoutWhatsApp()">
+                <i data-lucide="message-square"></i>
+                <span>Enviar Consulta por WhatsApp</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-overlay" id="modal-product-detail" onclick="closeProductModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeProductModal()">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-body">
+                <div class="modal-image-area">
+                    <div class="modal-image-placeholder">
+                        <i data-lucide="package" class="placeholder-icon"></i>
+                        <span id="modal-product-category" class="image-category-tag">Categoria</span>
+                    </div>
+                </div>
+                <div class="modal-info-area">
+                    <span class="modal-product-sku" id="modal-product-sku">SKU: ---</span>
+                    <h3 class="modal-product-title" id="modal-product-title">Nombre del Repuesto</h3>
+                    <div class="modal-price-row">
+                        <span class="modal-price-label">Precio Estimado</span>
+                        <span class="modal-product-price" id="modal-product-price">$0.00</span>
+                    </div>
+                    
+                    <div class="product-specs-box">
+                        <div class="spec-row">
+                            <span class="spec-label">Disponibilidad:</span>
+                            <span class="spec-val" id="modal-product-stock-status">Disponible</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Stock en tienda:</span>
+                            <span class="spec-val" id="modal-product-stock-qty">0 unidades</span>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-action-row" id="modal-action-row">
+                        <!-- Add to Cart or Ask button -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Footer Section -->
+    <footer class="footer-section" id="contacto">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo-area">
+                        <div class="logo-badge">DH</div>
+                        <span class="logo-text">MOTOPARTES</span>
+                    </div>
+                    <p class="brand-desc">Tu taller de repuestos de confianza. Brindamos los mejores componentes nacionales e importados y asesoramiento técnico profesional para tu moto.</p>
+                </div>
+                
+                <div class="footer-info">
+                    <h4 class="footer-title">Contacto</h4>
+                    <ul class="contact-list">
+                        <li>
+                            <i data-lucide="map-pin"></i>
+                            <span>Cangallo y Ramos Mejía, Barrio Quintana, Corrientes Capital, Argentina</span>
+                        </li>
+                        <li>
+                            <i data-lucide="phone"></i>
+                            <span>+54 93795 331132</span>
+                        </li>
+                        <li>
+                            <i data-lucide="clock"></i>
+                            <span>Lun a Vie: 08:00 a 21:00 | Sáb: 08:00 a 20:00 | Dom: Cerrado</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h4 class="footer-title">Redes Sociales</h4>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/dhmotopartes" target="_blank" class="social-link" title="Instagram"><i data-lucide="instagram"></i></a>
+                        <a href="https://www.facebook.com/dhmotopartes" target="_blank" class="social-link" title="Facebook"><i data-lucide="facebook"></i></a>
+                        <a href="https://wa.me/5493795331132" target="_blank" class="social-link" title="WhatsApp"><i data-lucide="message-circle"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 DH Motopartes. Todos los derechos reservados. Las imágenes son de carácter ilustrativo.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
