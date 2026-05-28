@@ -7,7 +7,8 @@ const state = {
         currency: '$',
         whatsapp: '+5493795331132' // Official DH Motopartes WhatsApp
     },
-    cart: []
+    cart: [],
+    paymentMethod: 'cash' // 'cash' or 'qr'
 };
 
 let activeCategory = '';
@@ -357,7 +358,12 @@ window.checkoutWhatsApp = function() {
         message += `  _Precio: ${currency}${item.product.price.toFixed(2)} c/u_ -> *${currency}${itemTotal.toFixed(2)}*\n\n`;
     });
     
+    const payText = state.paymentMethod === 'qr' 
+        ? 'Pago con QR / Transferencia (Comprobante adjunto)' 
+        : 'Efectivo / Retiro en local';
+        
     message += `----------------------------------------\n\n`;
+    message += `💳 *Método de Pago:* ${payText}\n`;
     message += `💰 *Total Estimado:* *${currency}${total.toFixed(2)}*\n\n`;
     message += `📱 _Consulta generada desde el catálogo web oficial._`;
     
@@ -395,6 +401,42 @@ window.askProductDirect = function(productId, event) {
     const waUrl = `https://wa.me/${phoneNumber}?text=${encodedText}`;
     
     window.open(waUrl, '_blank');
+};
+
+/* ==========================================================================
+   QR PAYMENT MODAL & METHOD SELECTION
+   ========================================================================== */
+window.selectPaymentMethod = function(method) {
+    state.paymentMethod = method;
+    
+    const cashOpt = document.getElementById('pay-option-cash');
+    const qrOpt = document.getElementById('pay-option-qr');
+    const btnViewQr = document.getElementById('btn-view-qr');
+    
+    if (method === 'cash') {
+        cashOpt.classList.add('active');
+        qrOpt.classList.remove('active');
+        btnViewQr.style.display = 'none';
+    } else if (method === 'qr') {
+        cashOpt.classList.remove('active');
+        qrOpt.classList.add('active');
+        btnViewQr.style.display = 'block';
+    }
+};
+
+window.openQRModal = function() {
+    const modal = document.getElementById('modal-qr-payment');
+    if (modal) {
+        modal.classList.add('active');
+        if (window.lucide) lucide.createIcons();
+    }
+};
+
+window.closeQRModal = function(e) {
+    const modal = document.getElementById('modal-qr-payment');
+    if (modal) {
+        modal.classList.remove('active');
+    }
 };
 
 /* ==========================================================================

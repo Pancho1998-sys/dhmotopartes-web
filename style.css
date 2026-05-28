@@ -1430,3 +1430,60 @@ button {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================================================
+   PAYMENT METHOD SELECTOR STYLES
+   ========================================================================== */
+.payment-method-selector {
+    margin-bottom: 20px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.payment-selector-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.payment-options {
+    display: flex;
+    gap: 10px;
+}
+
+.payment-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-dark);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.payment-option:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+.payment-option.active {
+    border-color: var(--rose-red);
+    color: #ffffff;
+    background-color: rgba(255, 46, 84, 0.08);
+    box-shadow: 0 0 10px rgba(255, 46, 84, 0.1);
+}
+
+.pay-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
