@@ -12,6 +12,7 @@ const state = {
 };
 
 let activeCategory = '';
+let fuseInstance = null;
 
 /* ==========================================================================
    INITIALIZATION & DATA FETCHING
@@ -41,6 +42,15 @@ async function fetchCatalog() {
         state.products = data.products || [];
         if (data.settings) {
             state.settings = { ...state.settings, ...data.settings };
+        }
+        
+        // Initialize Fuse.js for smart search
+        if (window.Fuse) {
+            fuseInstance = new Fuse(state.products, {
+                keys: ['name', 'sku', 'category'],
+                threshold: 0.3,
+                ignoreLocation: true
+            });
         }
         
         // Render initial UI
@@ -75,13 +85,27 @@ function renderCatalog() {
     const currency = state.settings.currency || '$';
     
     // Apply filters
-    const filtered = state.products.filter(p => {
+    let baseProducts = state.products;
+    
+    // 1. Apply Fuzzy Search (Fuse.js)
+    if (searchVal) {
+        if (fuseInstance) {
+            const results = fuseInstance.search(searchVal);
+            baseProducts = results.map(result => result.item);
+        } else {
+            // Fallback to strict search if Fuse fails to load
+            baseProducts = state.products.filter(p => 
+                p.name.toLowerCase().includes(searchVal) || 
+                p.sku.toLowerCase().includes(searchVal)
+            );
+        }
+    }
+
+    // 2. Apply Category and Stock filters
+    const filtered = baseProducts.filter(p => {
         const matchesCategory = !activeCategory || p.category === activeCategory;
-        const matchesSearch = p.name.toLowerCase().includes(searchVal) || 
-                              p.sku.toLowerCase().includes(searchVal);
         const matchesStock = !onlyWithStock || p.stock > 0;
-        
-        return matchesCategory && matchesSearch && matchesStock;
+        return matchesCategory && matchesStock;
     });
     
     if (filtered.length === 0) {
