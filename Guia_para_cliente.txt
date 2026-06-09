@@ -1,0 +1,32 @@
+====================================================== GUÍA DE USO: SISTEMA DE GESTIÓN Y CATÁLOGO ONLINE
+¡Bienvenido a tu nueva plataforma de ventas! A continuación, te explicamos paso a paso cómo administrar tu negocio y cómo tus clientes verán tu catálogo de repuestos.
+
+PASO 1: ACCESO AL SISTEMA ADMINISTRATIVO (TU PANEL)
+Ingresa a la página web de administración (ej. misistema.com/admin).
+Inicia sesión con tu Correo Electrónico y Contraseña autorizados.
+Al ingresar, estarás en tu Panel de Control (Punto de Venta o POS). Nota: Este panel es completamente privado. Solo tú y tu personal verán las ventas, la caja y el inventario de tu negocio.
+
+PASO 2: CARGA DE REPUESTOS Y PRECIOS
+En el menú lateral, dirígete a la sección "Inventario".
+Aquí podrás agregar nuevos repuestos, herramientas o accesorios.
+Asegúrate de colocar correctamente el Nombre, Categoría, Precio de Venta y el Stock disponible. ¡Todo lo que cargues en tu inventario con stock aparecerá automáticamente en tu catálogo online!
+
+PASO 3: CÓMO COMPARTIR TU CATÁLOGO ONLINE
+Tu negocio tiene un enlace ÚNICO y personalizado para que tus clientes puedan ver exactamente qué repuestos tienes a la venta.
+
+Ve a la sección "Configuración" en tu menú lateral.
+Allí encontrarás tu "Enlace de Catálogo Público".
+Cópialo y pégalo donde quieras:
+En la biografía de tu perfil de Instagram o Facebook.
+En tus mensajes y respuestas automáticas de WhatsApp Business.
+Enviándolo directamente a los clientes que te pregunten qué repuestos tienes.
+
+PASO 4: CÓMO RECIBES LOS PEDIDOS
+Cuando un cliente haga clic en tu enlace personalizado, verá tu catálogo completo con tus precios reales actualizados al instante.
+El cliente podrá usar el buscador inteligente, filtrar por repuestos y armar su propio carrito.
+Al finalizar, el cliente hará clic en "Enviar Consulta por WhatsApp".
+¡Listo! Recibirás un mensaje automático directamente en tu WhatsApp con el detalle exacto de los repuestos que quiere comprar y el precio total estimado.
+
+
+TIP IMPORTANTE:
+Recuerda mantener siempre tu inventario actualizado desde el Panel de Administración. Si marcas un producto como "Sin Stock", tus clientes seguirán viéndolo en tu catálogo pero sabrán que tienen que consultarte la disponibilidad.

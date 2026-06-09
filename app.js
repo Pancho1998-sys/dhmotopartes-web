@@ -1,4 +1,11 @@
 /* ==========================================================================
+   SUPABASE CLIENT CONFIGURATION
+   ========================================================================== */
+const supabaseUrl = "https://wkgxssfbzgahkztdjzmo.supabase.co";
+const supabaseKey = "sb_publishable_jwKdrvQXfD3PnddXDJcBhw_iIHXs7yL";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+/* ==========================================================================
    GLOBAL APP STATE
    ========================================================================== */
 const state = {
@@ -32,17 +39,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchCatalog() {
     try {
-        const response = await fetch('/api/db');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Leer el ID de la tienda desde la URL (ej: misistema.com/catalogo?store=uuid-del-negocio)
+        const urlParams = new URLSearchParams(window.location.search);
+        const storeId = urlParams.get('store');
+
+        if (!storeId) {
+            // Si alguien entra sin un ID en la URL, mostramos un error amigable
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = `
+                <div class="grid-empty">
+                    <i data-lucide="link-2-off" class="empty-icon" style="color: var(--text-secondary);"></i>
+                    <p class="empty-title">Enlace de Catálogo Inválido</p>
+                    <p class="empty-text">Este enlace no está asociado a ningún comercio. Asegúrate de ingresar con el link directo del negocio.</p>
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+            return;
         }
-        const data = await response.json();
+
+        // Llamamos a la función segura pasándole el ID dinámico
+        const { data: productos, error } = await supabase.rpc('get_public_catalog', { 
+            target_store_id: storeId 
+        });
+
+        if (error) {
+            console.error("Error cargando catálogo:", error);
+            showCatalogError();
+            return;
+        }
+
+        console.log("Catálogo cargado con éxito:", productos);
         
-        // Populate products and settings
-        state.products = data.products || [];
-        if (data.settings) {
-            state.settings = { ...state.settings, ...data.settings };
-        }
+        // Populate products
+        state.products = productos || [];
         
         // Initialize Fuse.js for smart search
         if (window.Fuse) {
