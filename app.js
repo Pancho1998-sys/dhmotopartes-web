@@ -3,7 +3,7 @@
    ========================================================================== */
 const supabaseUrl = "https://wkgxssfbzgahkztdjzmo.supabase.co";
 const supabaseKey = "sb_publishable_jwKdrvQXfD3PnddXDJcBhw_iIHXs7yL";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 /* ==========================================================================
    GLOBAL APP STATE
@@ -58,7 +58,7 @@ async function fetchCatalog() {
         }
 
         // Llamamos a la función segura pasándole el ID dinámico
-        const { data: productos, error } = await supabase.rpc('get_public_catalog', { 
+        const { data: productos, error } = await supabaseClient.rpc('get_public_catalog', { 
             target_store_id: storeId 
         });
 
