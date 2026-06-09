@@ -58,7 +58,7 @@ async function fetchCatalog() {
         }
 
         // Llamamos a la función segura pasándole el ID dinámico
-        const { data: productos, error } = await supabaseClient.rpc('get_public_catalog', { 
+        const { data: catalogData, error } = await supabaseClient.rpc('get_public_catalog', { 
             target_store_id: storeId 
         });
 
@@ -68,10 +68,14 @@ async function fetchCatalog() {
             return;
         }
 
-        console.log("Catálogo cargado con éxito:", productos);
+        console.log("Catálogo cargado con éxito:", catalogData);
         
-        // Populate products
-        state.products = productos || [];
+        // Populate products and categories
+        state.products = catalogData?.products || [];
+        state.categories = catalogData?.categories || [];
+        
+        // Render category tabs
+        renderCategoryTabs();
         
         // Initialize Fuse.js for smart search
         if (window.Fuse) {
@@ -211,6 +215,30 @@ window.selectCategory = function(category) {
     
     renderCatalog();
 };
+
+function renderCategoryTabs() {
+    const tabsContainer = document.getElementById('category-tabs');
+    if (!tabsContainer) return;
+    
+    let html = `<button class="category-tab ${activeCategory === '' ? 'active' : ''}" onclick="selectCategory('')">Todos</button>`;
+    
+    if (state.categories && state.categories.length > 0) {
+        state.categories.forEach(cat => {
+            const isActive = activeCategory === cat ? 'active' : '';
+            html += `<button class="category-tab ${isActive}" onclick="selectCategory('${cat}')">${cat}</button>`;
+        });
+    } else {
+        // Fallback to extraction if not defined
+        const extracted = [...new Set(state.products.map(p => p.category))];
+        extracted.forEach(cat => {
+            if (!cat) return;
+            const isActive = activeCategory === cat ? 'active' : '';
+            html += `<button class="category-tab ${isActive}" onclick="selectCategory('${cat}')">${cat}</button>`;
+        });
+    }
+    
+    tabsContainer.innerHTML = html;
+}
 
 /* ==========================================================================
    PRODUCT DETAIL MODAL
