@@ -44,17 +44,53 @@ async function fetchCatalog() {
         const storeId = urlParams.get('store');
 
         if (!storeId) {
-            // Si alguien entra sin un ID en la URL, mostramos un error amigable
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = `
-                <div class="grid-empty">
-                    <i data-lucide="link-2-off" class="empty-icon" style="color: var(--text-secondary);"></i>
-                    <p class="empty-title">Enlace de Catálogo Inválido</p>
-                    <p class="empty-text">Este enlace no está asociado a ningún comercio. Asegúrate de ingresar con el link directo del negocio.</p>
-                </div>
-            `;
-            if (window.lucide) lucide.createIcons();
-            return;
+            // Intento de fallback: cargar la base de datos local desde /api/db (desarrollo o local)
+            console.log("No store ID found. Fetching fallback data from /api/db...");
+            try {
+                const response = await fetch('/api/db');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const localData = await response.json();
+                console.log("Loaded local catalog fallback:", localData);
+                
+                state.products = localData.products || [];
+                if (localData.settings && localData.settings.categories) {
+                    state.categories = localData.settings.categories;
+                } else {
+                    state.categories = [...new Set(state.products.map(p => p.category))];
+                }
+                
+                if (localData.settings) {
+                    state.settings = { ...state.settings, ...localData.settings };
+                }
+
+                // Render tabs and catalog
+                renderCategoryTabs();
+                if (window.Fuse) {
+                    fuseInstance = new Fuse(state.products, {
+                        keys: ['name', 'sku', 'category'],
+                        threshold: 0.3,
+                        ignoreLocation: true
+                    });
+                }
+                renderCatalog();
+                updateCartUI();
+                return;
+            } catch (localErr) {
+                console.error("Local fallback failed:", localErr);
+                // Si el fallback también falla, mostramos el mensaje de error de enlace inválido
+                const grid = document.getElementById('products-grid');
+                grid.innerHTML = `
+                    <div class="grid-empty">
+                        <i data-lucide="link-2-off" class="empty-icon" style="color: var(--text-secondary);"></i>
+                        <p class="empty-title">Enlace de Catálogo Inválido</p>
+                        <p class="empty-text">Este enlace no está asociado a ningún comercio. Asegúrate de ingresar con el link directo del negocio o de iniciar el servidor local.</p>
+                    </div>
+                `;
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
         }
 
         // Llamamos a la función segura pasándole el ID dinámico
