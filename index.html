@@ -26,8 +26,8 @@
     <header class="main-header">
         <div class="header-container">
             <div class="logo-area">
-                <div class="logo-badge">DH</div>
-                <span class="logo-text">MOTOPARTES</span>
+                <div class="logo-badge" id="header-logo-badge">DH</div>
+                <span class="logo-text" id="header-logo-text">MOTOPARTES</span>
             </div>
             
             <nav class="header-nav">
@@ -163,16 +163,16 @@
                     </label>
                     <label class="payment-option" id="pay-option-qr" onclick="selectPaymentMethod('qr')">
                         <input type="radio" name="payment-method" value="qr" style="display:none;">
-                        <i data-lucide="qr-code" class="pay-icon" style="width:16px; height:16px;"></i>
-                        <span>Pago con QR</span>
+                        <i data-lucide="smartphone" class="pay-icon" style="width:16px; height:16px;"></i>
+                        <span>Transferencia / Alias</span>
                     </label>
                 </div>
             </div>
             
             <!-- Button to open QR Modal (Hidden by default) -->
             <button class="btn btn-secondary btn-full-width" id="btn-view-qr" style="display: none; margin-bottom: 12px; border-color: rgba(255, 46, 84, 0.3); color: var(--rose-red); background-color: rgba(255, 46, 84, 0.05);" onclick="openQRModal()">
-                <i data-lucide="qr-code"></i>
-                <span>Ver QR de Pago</span>
+                <i data-lucide="smartphone"></i>
+                <span>Ver Datos de Transferencia</span>
             </button>
 
             <p class="shipping-disclaimer">
@@ -196,31 +196,31 @@
                 <div style="margin-bottom: 16px;">
                     <span class="image-category-tag" style="background-color: rgba(255, 46, 84, 0.1); border-color: rgba(255, 46, 84, 0.2); color: var(--rose-red); font-size: 11px; padding: 4px 14px;">Mercado Pago / Transferencia</span>
                 </div>
-                <h3 class="modal-product-title" style="font-size: 22px; margin-bottom: 12px; color: var(--text-primary);">Escaneá y Pagá tu Pedido</h3>
+                <h3 class="modal-product-title" style="font-size: 22px; margin-bottom: 12px; color: var(--text-primary);">Pagar por Transferencia</h3>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
-                    Utilizá tu billetera virtual preferida (Mercado Pago, Modo, Ualá o tu App bancaria) para realizar el pago por el monto total estimado.
+                    Utilizá tu billetera virtual preferida (Mercado Pago, Modo, Ualá) o tu App bancaria para transferir el dinero de tu compra.
                 </p>
                 
-                <div style="background-color: #ffffff; padding: 12px; border-radius: 16px; display: inline-block; margin: 0 auto 20px; width: 200px; height: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                    <img src="qr_pago.png" alt="Código QR de Pago" style="width: 100%; height: 100%; object-fit: contain;">
-                </div>
-                
-                <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 12px; text-align: left; font-size: 13px; margin-bottom: 20px; line-height: 1.6;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span style="color: var(--text-secondary);">Alias Mercado Pago:</span>
-                        <strong style="color: var(--text-primary); font-family: monospace;">dh.motopartes.mp</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: var(--text-secondary);">CVU para Transferencia:</span>
-                        <strong style="color: var(--text-primary); font-family: monospace; font-size: 11px;">0000003100012345678901</strong>
+                <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; text-align: center; font-size: 15px; margin-bottom: 20px; line-height: 1.6;">
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">Alias de Pago (CBU / CVU / Mercado Pago):</div>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                        <strong id="modal-display-alias" style="color: var(--text-primary); font-family: monospace; font-size: 18px; background: rgba(255, 255, 255, 0.05); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); user-select: all;">---</strong>
+                        <button type="button" class="btn btn-secondary small" id="modal-copy-alias-btn" onclick="copyModalAlias()" style="padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                            <i data-lucide="copy" style="width: 14px; height: 14px;"></i> <span id="modal-copy-alias-text">Copiar</span>
+                        </button>
                     </div>
                 </div>
                 
-                <div style="text-align: left; font-size: 12px; color: var(--text-secondary); line-height: 1.5; padding-left: 10px; border-left: 2px solid var(--rose-red);">
+                <div style="text-align: left; font-size: 12px; color: var(--text-secondary); line-height: 1.5; padding-left: 10px; border-left: 2px solid var(--rose-red); margin-bottom: 20px;">
                     <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Instrucciones:</p>
-                    <p>1. Escaneá el QR o usá el Alias/CVU para transferir.</p>
-                    <p>2. Envianos tu pedido por WhatsApp y adjuntá el comprobante de pago.</p>
+                    <p>1. Transferí el monto total estimado usando el Alias de arriba.</p>
+                    <p>2. Presioná el botón de abajo para enviar el pedido por WhatsApp y adjuntar el comprobante.</p>
                 </div>
+                
+                <button type="button" class="btn btn-primary btn-full-width btn-large" onclick="checkoutWhatsApp(); closeQRModal();" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i data-lucide="message-square"></i>
+                    <span>Enviar Pedido y Comprobante</span>
+                </button>
             </div>
         </div>
     </div>
@@ -271,10 +271,10 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <div class="logo-area">
-                        <div class="logo-badge">DH</div>
-                        <span class="logo-text">MOTOPARTES</span>
+                        <div class="logo-badge" id="footer-logo-badge">DH</div>
+                        <span class="logo-text" id="footer-logo-text">MOTOPARTES</span>
                     </div>
-                    <p class="brand-desc">Tu taller de repuestos de confianza. Brindamos los mejores componentes nacionales e importados y asesoramiento técnico profesional para tu moto.</p>
+                    <p class="brand-desc" id="footer-brand-desc">Tu taller de repuestos de confianza. Brindamos los mejores componentes nacionales e importados y asesoramiento técnico profesional para tu moto.</p>
                 </div>
                 
                 <div class="footer-info">
@@ -282,11 +282,11 @@
                     <ul class="contact-list">
                         <li>
                             <i data-lucide="map-pin"></i>
-                            <span>Cangallo y Ramos Mejía, Barrio Quintana, Corrientes Capital, Argentina</span>
+                            <span id="footer-address">Cangallo y Ramos Mejía, Barrio Quintana, Corrientes Capital, Argentina</span>
                         </li>
                         <li>
                             <i data-lucide="phone"></i>
-                            <span>+54 93795 331132</span>
+                            <span id="footer-phone">+54 93795 331132</span>
                         </li>
                         <li>
                             <i data-lucide="clock"></i>
@@ -298,13 +298,13 @@
                 <div class="footer-social">
                     <h4 class="footer-title">Redes Sociales</h4>
                     <div class="social-links">
-                        <a href="https://www.instagram.com/dhmotopartes" target="_blank" class="social-link" title="Instagram">
+                        <a id="footer-instagram-link" href="https://www.instagram.com/dhmotopartes" target="_blank" class="social-link" title="Instagram">
                             <img src="instagram.png?v=2" alt="Instagram" style="width: 24px; height: 24px; border-radius: 6px; object-fit: cover;">
                         </a>
-                        <a href="https://www.facebook.com/dhmotopartes" target="_blank" class="social-link" title="Facebook">
+                        <a id="footer-facebook-link" href="https://www.facebook.com/dhmotopartes" target="_blank" class="social-link" title="Facebook">
                             <img src="facebook.png?v=2" alt="Facebook" style="width: 24px; height: 24px; border-radius: 6px; object-fit: cover;">
                         </a>
-                        <a href="https://wa.me/5493795331132" target="_blank" class="social-link" title="WhatsApp">
+                        <a id="footer-whatsapp-link" href="https://wa.me/5493795331132" target="_blank" class="social-link" title="WhatsApp">
                             <i data-lucide="message-circle"></i>
                         </a>
                     </div>

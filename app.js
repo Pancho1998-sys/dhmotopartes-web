@@ -64,6 +64,9 @@ async function fetchCatalog() {
                 if (localData.settings) {
                     state.settings = { ...state.settings, ...localData.settings };
                 }
+                
+                // Apply dynamic branding to UI
+                applyStoreBranding();
 
                 // Render tabs and catalog
                 renderCategoryTabs();
@@ -109,6 +112,14 @@ async function fetchCatalog() {
         // Populate products and categories
         state.products = catalogData?.products || [];
         state.categories = catalogData?.categories || [];
+        
+        // Populate settings dynamically from database
+        if (catalogData?.settings) {
+            state.settings = { ...state.settings, ...catalogData.settings };
+        }
+        
+        // Apply dynamic branding to UI
+        applyStoreBranding();
         
         // Render category tabs
         renderCategoryTabs();
@@ -476,11 +487,15 @@ window.checkoutWhatsApp = function() {
     });
     
     const payText = state.paymentMethod === 'qr' 
-        ? 'Pago con QR / Transferencia (Comprobante adjunto)' 
+        ? 'Transferencia / Alias (Comprobante adjunto)' 
         : 'Efectivo / Retiro en local';
         
     message += `----------------------------------------\n\n`;
     message += `💳 *Método de Pago:* ${payText}\n`;
+    if (state.paymentMethod === 'qr') {
+        const alias = state.settings.storeAlias || 'dh.motopartes.mp';
+        message += `📍 *Alias del Negocio:* ${alias}\n`;
+    }
     message += `💰 *Total Estimado:* *${currency}${total.toFixed(2)}*\n\n`;
     message += `📱 _Consulta generada desde el catálogo web oficial._`;
     
@@ -574,3 +589,89 @@ function loadCartFromSession() {
         }
     }
 }
+
+/* ==========================================================================
+   DYNAMIC STORE BRANDING & TRANSFER UTILITIES
+   ========================================================================== */
+function applyStoreBranding() {
+    const storeName = state.settings.storeName || 'DH Motopartes';
+    
+    // Page title
+    document.title = `${storeName} - Catálogo Oficial`;
+    
+    // Header and Footer Logo Badge & Text
+    const headerLogoBadge = document.getElementById('header-logo-badge');
+    const headerLogoText = document.getElementById('header-logo-text');
+    const footerLogoBadge = document.getElementById('footer-logo-badge');
+    const footerLogoText = document.getElementById('footer-logo-text');
+    
+    const initials = storeName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    
+    if (headerLogoBadge) headerLogoBadge.textContent = initials || 'DH';
+    if (headerLogoText) headerLogoText.textContent = storeName.toUpperCase() || 'MOTOPARTES';
+    if (footerLogoBadge) footerLogoBadge.textContent = initials || 'DH';
+    if (footerLogoText) footerLogoText.textContent = storeName.toUpperCase() || 'MOTOPARTES';
+    
+    // Footer info
+    const footerAddress = document.getElementById('footer-address');
+    if (footerAddress && state.settings.storeAddress) {
+        footerAddress.textContent = state.settings.storeAddress;
+    }
+    
+    const footerPhone = document.getElementById('footer-phone');
+    if (footerPhone && state.settings.storePhone) {
+        footerPhone.textContent = state.settings.storePhone;
+    }
+    
+    const footerBrandDesc = document.getElementById('footer-brand-desc');
+    if (footerBrandDesc && state.settings.brandDescription) {
+        footerBrandDesc.textContent = state.settings.brandDescription;
+    }
+    
+    // Social/Contact links in footer
+    const footerWhatsapp = document.getElementById('footer-whatsapp-link');
+    if (footerWhatsapp && state.settings.whatsapp) {
+        let wa = state.settings.whatsapp.trim();
+        let waUrl = wa;
+        if (!wa.startsWith('http://') && !wa.startsWith('https://')) {
+            const digits = wa.replace(/[^\d+]/g, '');
+            waUrl = `https://wa.me/${digits.replace('+', '')}`;
+        }
+        footerWhatsapp.href = waUrl;
+    }
+    
+    const footerInstagram = document.getElementById('footer-instagram-link');
+    if (footerInstagram && state.settings.instagram) {
+        let insta = state.settings.instagram.trim();
+        let instaUrl = insta;
+        if (!insta.startsWith('http://') && !insta.startsWith('https://')) {
+            const username = insta.replace('@', '');
+            instaUrl = `https://instagram.com/${username}`;
+        }
+        footerInstagram.href = instaUrl;
+    }
+    
+    // Update Alias Display in Transfer Modal
+    const modalDisplayAlias = document.getElementById('modal-display-alias');
+    if (modalDisplayAlias) {
+        modalDisplayAlias.textContent = state.settings.storeAlias || 'dh.motopartes.mp';
+    }
+}
+
+window.copyModalAlias = function () {
+    const alias = state.settings.storeAlias || 'dh.motopartes.mp';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(alias).then(() => {
+            const textSpan = document.getElementById('modal-copy-alias-text');
+            if (textSpan) {
+                const orig = textSpan.textContent;
+                textSpan.textContent = '¡Copiado!';
+                setTimeout(() => { textSpan.textContent = orig; }, 2000);
+            }
+        }).catch(err => {
+            console.error('Failed to copy alias:', err);
+        });
+    } else {
+        alert(`Alias: ${alias}`);
+    }
+};
