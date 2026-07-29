@@ -2,7 +2,7 @@
    SUPABASE CLIENT CONFIGURATION
    ========================================================================== */
 const supabaseUrl = "https://wkgxssfbzgahkztdjzmo.supabase.co";
-const supabaseKey = "sb_publishable_jwKdrvQXfD3PnddXDJcBhw_iIHXs7yL";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndrZ3hzc2ZiemdhaGt6dGRqem1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzI4MjcsImV4cCI6MjA5NjA0ODgyN30.BNlE6dOMlbMlERR7ri4c4QIKqVXCJPHcZviTNunku44";
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 /* ==========================================================================
@@ -38,76 +38,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchCatalog() {
+    // Leer el ID de la tienda desde la URL (ej: misistema.com/catalogo?store=uuid-del-negocio)
+    const urlParams = new URLSearchParams(window.location.search);
+    let storeId = urlParams.get('store');
+
+    // Fallback store ID para DH Motopartes si no se especifica en la URL
+    if (!storeId) {
+        storeId = "3cd7c0ff-735b-430f-8da6-c538e4d5ed77";
+    }
+
     try {
-        // Leer el ID de la tienda desde la URL (ej: misistema.com/catalogo?store=uuid-del-negocio)
-        const urlParams = new URLSearchParams(window.location.search);
-        const storeId = urlParams.get('store');
-
-        if (!storeId) {
-            // Intento de fallback: cargar la base de datos local desde /api/db (desarrollo o local)
-            console.log("No store ID found. Fetching fallback data from /api/db...");
-            try {
-                const response = await fetch('/api/db');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const localData = await response.json();
-                console.log("Loaded local catalog fallback:", localData);
-                
-                state.products = localData.products || [];
-                if (localData.settings && localData.settings.categories) {
-                    state.categories = localData.settings.categories;
-                } else {
-                    state.categories = [...new Set(state.products.map(p => p.category))];
-                }
-                
-                if (localData.settings) {
-                    state.settings = { ...state.settings, ...localData.settings };
-                }
-                
-                // Apply dynamic branding to UI
-                applyStoreBranding();
-
-                // Render tabs and catalog
-                renderCategoryTabs();
-                if (window.Fuse) {
-                    fuseInstance = new Fuse(state.products, {
-                        keys: ['name', 'sku', 'category'],
-                        threshold: 0.3,
-                        ignoreLocation: true
-                    });
-                }
-                renderCatalog();
-                updateCartUI();
-                return;
-            } catch (localErr) {
-                console.error("Local fallback failed:", localErr);
-                // Si el fallback también falla, mostramos el mensaje de error de enlace inválido
-                const grid = document.getElementById('products-grid');
-                grid.innerHTML = `
-                    <div class="grid-empty">
-                        <i data-lucide="link-2-off" class="empty-icon" style="color: var(--text-secondary);"></i>
-                        <p class="empty-title">Enlace de Catálogo Inválido</p>
-                        <p class="empty-text">Este enlace no está asociado a ningún comercio. Asegúrate de ingresar con el link directo del negocio o de iniciar el servidor local.</p>
-                    </div>
-                `;
-                if (window.lucide) lucide.createIcons();
-                return;
-            }
-        }
-
+        console.log(`Intentando cargar catálogo desde Supabase para la tienda: ${storeId}`);
         // Llamamos a la función segura pasándole el ID dinámico
         const { data: catalogData, error } = await supabaseClient.rpc('get_public_catalog', { 
             target_store_id: storeId 
         });
 
         if (error) {
-            console.error("Error cargando catálogo:", error);
-            showCatalogError();
+            console.warn("Error cargando catálogo desde Supabase, intentando fallback local:", error);
+            await fetchLocalFallback();
             return;
         }
 
-        console.log("Catálogo cargado con éxito:", catalogData);
+        console.log("Catálogo cargado con éxito desde Supabase:", catalogData);
         
         // Populate products and categories
         state.products = catalogData?.products || [];
@@ -137,8 +90,60 @@ async function fetchCatalog() {
         renderCatalog();
         updateCartUI();
     } catch (err) {
-        console.error("Could not fetch catalog data:", err);
-        showCatalogError();
+        console.warn("Excepción al cargar catálogo desde Supabase, intentando fallback local:", err);
+        await fetchLocalFallback();
+    }
+}
+
+async function fetchLocalFallback() {
+    console.log("Cargando datos estáticos desde /api/db...");
+    try {
+        const response = await fetch('/api/db');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const localData = await response.json();
+        console.log("Loaded local catalog fallback:", localData);
+        
+        state.products = localData.products || [];
+        if (localData.settings && localData.settings.categories) {
+            state.categories = localData.settings.categories;
+        } else {
+            state.categories = [...new Set(state.products.map(p => p.category))];
+        }
+        
+        if (localData.settings) {
+            state.settings = { ...state.settings, ...localData.settings };
+        }
+        
+        // Apply dynamic branding to UI
+        applyStoreBranding();
+
+        // Render tabs and catalog
+        renderCategoryTabs();
+        if (window.Fuse) {
+            fuseInstance = new Fuse(state.products, {
+                keys: ['name', 'sku', 'category'],
+                threshold: 0.3,
+                ignoreLocation: true
+            });
+        }
+        renderCatalog();
+        updateCartUI();
+    } catch (localErr) {
+        console.error("Local fallback failed:", localErr);
+        // Si el fallback también falla, mostramos el mensaje de error de enlace inválido
+        const grid = document.getElementById('products-grid');
+        if (grid) {
+            grid.innerHTML = `
+                <div class="grid-empty">
+                    <i data-lucide="link-2-off" class="empty-icon" style="color: var(--text-secondary);"></i>
+                    <p class="empty-title">Catálogo no disponible</p>
+                    <p class="empty-text">No se pudo establecer conexión con la base de datos ni con el respaldo local. Por favor, reintente más tarde.</p>
+                </div>
+            `;
+        }
+        if (window.lucide) lucide.createIcons();
     }
 }
 
@@ -493,7 +498,7 @@ window.checkoutWhatsApp = function() {
     message += `----------------------------------------\n\n`;
     message += `💳 *Método de Pago:* ${payText}\n`;
     if (state.paymentMethod === 'qr') {
-        const alias = state.settings.storeAlias || 'dh.motopartes.mp';
+        const alias = state.settings.storeAlias || 'dhmotopartes.mp';
         message += `📍 *Alias del Negocio:* ${alias}\n`;
     }
     message += `💰 *Total Estimado:* *${currency}${total.toFixed(2)}*\n\n`;
@@ -654,12 +659,12 @@ function applyStoreBranding() {
     // Update Alias Display in Transfer Modal
     const modalDisplayAlias = document.getElementById('modal-display-alias');
     if (modalDisplayAlias) {
-        modalDisplayAlias.textContent = state.settings.storeAlias || 'dh.motopartes.mp';
+        modalDisplayAlias.textContent = state.settings.storeAlias || 'dhmotopartes.mp';
     }
 }
 
 window.copyModalAlias = function () {
-    const alias = state.settings.storeAlias || 'dh.motopartes.mp';
+    const alias = state.settings.storeAlias || 'dhmotopartes.mp';
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(alias).then(() => {
             const textSpan = document.getElementById('modal-copy-alias-text');
