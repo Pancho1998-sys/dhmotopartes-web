@@ -98,7 +98,7 @@ async function fetchCatalog() {
 async function fetchLocalFallback() {
     console.log("Cargando datos estáticos desde /api/db...");
     try {
-        const response = await fetch('/api/db');
+        const response = await fetch('/api/db?t=' + Date.now());
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -220,10 +220,14 @@ function renderCatalog() {
                    <i data-lucide="message-circle" style="width: 18px; height: 18px;"></i>
                </button>`;
                
+        const cardImage = p.image 
+            ? `<img src="${p.image}" class="card-image" alt="${p.name}">` 
+            : `<i data-lucide="package" class="card-icon"></i>`;
+
         html += `
             <div class="product-card" onclick="viewProductDetails('${p.id}')">
                 <div class="card-image-wrapper">
-                    <i data-lucide="package" class="card-icon"></i>
+                    ${cardImage}
                     <span class="card-category-tag">${p.category}</span>
                     <span class="card-stock-badge ${stockBadgeClass}">${stockBadgeText}</span>
                 </div>
@@ -298,6 +302,27 @@ function renderCategoryTabs() {
 window.viewProductDetails = function(productId) {
     const p = state.products.find(prod => prod.id === productId);
     if (!p) return;
+    
+    // Render product image or placeholder
+    const imageArea = document.querySelector('.modal-image-area');
+    if (imageArea) {
+        if (p.image) {
+            imageArea.style.backgroundImage = `url('${p.image}')`;
+            imageArea.style.backgroundSize = 'cover';
+            imageArea.style.backgroundPosition = 'center';
+            imageArea.innerHTML = `
+                <span id="modal-product-category" class="image-category-tag">${p.category}</span>
+            `;
+        } else {
+            imageArea.style.backgroundImage = 'none';
+            imageArea.innerHTML = `
+                <div class="modal-image-placeholder">
+                    <i data-lucide="package" class="placeholder-icon"></i>
+                </div>
+                <span id="modal-product-category" class="image-category-tag">${p.category}</span>
+            `;
+        }
+    }
     
     const currency = state.settings.currency || '$';
     const hasStock = p.stock > 0;

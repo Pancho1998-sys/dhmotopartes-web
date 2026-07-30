@@ -14,6 +14,10 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        # Disable caching completely for development
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
         super().end_headers()
 
     def do_OPTIONS(self):
@@ -21,6 +25,10 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        # Strip query parameters from self.path so that SimpleHTTPRequestHandler maps files correctly
+        parts = self.path.split('?')
+        self.path = parts[0]
+        
         if self.path == '/api/db':
             db_path = POS_DB_PATH if os.path.exists(POS_DB_PATH) else LOCAL_DB_PATH
             

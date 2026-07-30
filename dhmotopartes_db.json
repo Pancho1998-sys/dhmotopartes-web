@@ -10,7 +10,7 @@
             "stock": 42,
             "stockMin": 10,
             "location": "Estante B-1",
-            "image": ""
+            "image": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=500"
         },
         {
             "id": "p2",
@@ -22,7 +22,7 @@
             "stock": 22,
             "stockMin": 5,
             "location": "Estante A-4",
-            "image": ""
+            "image": "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500"
         },
         {
             "id": "p3",
