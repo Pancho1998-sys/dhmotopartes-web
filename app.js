@@ -12,7 +12,9 @@ const state = {
     products: [],
     settings: {
         currency: '$',
-        whatsapp: '+5493795331132' // Official DH Motopartes WhatsApp
+        whatsapp: '+5493795331132', // Official DH Motopartes WhatsApp
+        storeAlias: 'DHMOTOPARTES',
+        storeHolder: 'DANIEL OSCAR HIDALGO'
     },
     cart: [],
     paymentMethod: 'cash' // 'cash' or 'qr'
@@ -523,8 +525,10 @@ window.checkoutWhatsApp = function() {
     message += `----------------------------------------\n\n`;
     message += `💳 *Método de Pago:* ${payText}\n`;
     if (state.paymentMethod === 'qr') {
-        const alias = state.settings.storeAlias || 'dhmotopartes.mp';
+        const alias = state.settings.storeAlias || 'DHMOTOPARTES';
+        const holder = state.settings.storeHolder || 'DANIEL OSCAR HIDALGO';
         message += `📍 *Alias del Negocio:* ${alias}\n`;
+        message += `👤 *Titular de la Cuenta:* ${holder}\n`;
     }
     message += `💰 *Total Estimado:* *${currency}${total.toFixed(2)}*\n\n`;
     message += `📱 _Consulta generada desde el catálogo web oficial._`;
@@ -684,12 +688,16 @@ function applyStoreBranding() {
     // Update Alias Display in Transfer Modal
     const modalDisplayAlias = document.getElementById('modal-display-alias');
     if (modalDisplayAlias) {
-        modalDisplayAlias.textContent = state.settings.storeAlias || 'dhmotopartes.mp';
+        modalDisplayAlias.textContent = state.settings.storeAlias || 'DHMOTOPARTES';
+    }
+    const modalDisplayHolder = document.getElementById('modal-display-holder');
+    if (modalDisplayHolder) {
+        modalDisplayHolder.textContent = state.settings.storeHolder || 'DANIEL OSCAR HIDALGO';
     }
 }
 
 window.copyModalAlias = function () {
-    const alias = state.settings.storeAlias || 'dhmotopartes.mp';
+    const alias = state.settings.storeAlias || 'DHMOTOPARTES';
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(alias).then(() => {
             const textSpan = document.getElementById('modal-copy-alias-text');

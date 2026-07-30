@@ -362,7 +362,8 @@
         "storeName": "DHMotopartes",
         "storeAddress": "Av. Libertador 2450, Ciudad",
         "storePhone": "+54 9 11 5555-1234",
-        "storeAlias": "dhmotopartes.mp",
+        "storeAlias": "DHMOTOPARTES",
+        "storeHolder": "DANIEL OSCAR HIDALGO",
         "currency": "$",
         "storeTax": 15
     }
