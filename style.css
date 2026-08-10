@@ -388,20 +388,60 @@ button {
     50% { box-shadow: 0 0 35px rgba(255, 46, 84, 0.2); border-color: rgba(255, 46, 84, 0.25); }
 }
 
-.engine-cog {
-    color: var(--rose-red);
-    opacity: 0.85;
+.rider-moto-wrapper {
+    width: 230px;
+    height: 230px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    animation: rideMotion 2.4s infinite ease-in-out;
 }
 
-.cog-icon {
-    width: 140px;
-    height: 140px;
-    animation: rotateCog 25s infinite linear;
+.moto-rider-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 16px rgba(255, 46, 84, 0.35));
 }
 
-@keyframes rotateCog {
+/* Wheels Rotation Animation */
+.moto-wheel {
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: spinWheel 1.2s infinite linear;
+}
+
+@keyframes spinWheel {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* Rider motorcycle leaning / riding motion */
+@keyframes rideMotion {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-4px) rotate(-1deg);
+    }
+    50% {
+        transform: translateY(1px) rotate(0.5deg);
+    }
+    75% {
+        transform: translateY(-3px) rotate(-0.5deg);
+    }
+}
+
+/* Motion trails speed animation */
+.motion-trails path {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 40;
+    animation: dashStream 1.2s infinite linear;
+}
+
+@keyframes dashStream {
+    to { stroke-dashoffset: 0; }
 }
 
 .spark-line {
