@@ -27,7 +27,10 @@
         <div class="header-container">
             <div class="logo-area">
                 <div class="logo-badge" id="header-logo-badge">DH</div>
-                <span class="logo-text" id="header-logo-text">MOTOPARTES</span>
+                <div class="logo-text-group">
+                    <span class="logo-text" id="header-logo-text">MOTOPARTES</span>
+                    <span class="store-status-pill"><span class="pulse-dot"></span> Abierto</span>
+                </div>
             </div>
             
             <nav class="header-nav">
@@ -69,6 +72,39 @@
                         <i data-lucide="settings" class="cog-icon"></i>
                     </div>
                     <div class="spark-line"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Feature Badges Grid -->
+        <div class="hero-features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="refresh-cw" class="feature-icon"></i>
+                </div>
+                <div class="feature-text-group">
+                    <h4>Stock en Tiempo Real</h4>
+                    <p>Sincronizado directamente con el taller</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="zap" class="feature-icon"></i>
+                </div>
+                <div class="feature-text-group">
+                    <h4>Atención por WhatsApp</h4>
+                    <p>Confirmación inmediata de tu pedido</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="credit-card" class="feature-icon"></i>
+                </div>
+                <div class="feature-text-group">
+                    <h4>Múltiples Pagos</h4>
+                    <p>Efectivo y Transferencia Alias MP</p>
                 </div>
             </div>
         </div>
@@ -318,11 +354,14 @@
         </div>
     </footer>
 
+    <!-- Floating Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
     <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.basic.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- App JavaScript -->
-    <script src="app.js?v=2.0.0"></script>
+    <script src="app.js?v=2.1.0"></script>
 </body>
 </html>

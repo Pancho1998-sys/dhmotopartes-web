@@ -190,7 +190,7 @@ function renderCatalog() {
 
     // 2. Apply Category and Stock filters
     const filtered = baseProducts.filter(p => {
-        const matchesCategory = !activeCategory || p.category === activeCategory;
+        const matchesCategory = !activeCategory || (p.category && p.category.trim().toLowerCase() === activeCategory.trim().toLowerCase());
         const matchesStock = !onlyWithStock || p.stock > 0;
         return matchesCategory && matchesStock;
     });
@@ -210,12 +210,22 @@ function renderCatalog() {
     let html = '';
     filtered.forEach(p => {
         const hasStock = p.stock > 0;
-        const stockBadgeClass = hasStock ? 'available' : 'out';
-        const stockBadgeText = hasStock ? 'Disponible' : 'Consultar Stock';
+        let stockBadgeClass = 'out';
+        let stockBadgeText = 'Consultar Stock';
+        
+        if (hasStock) {
+            if (p.stock <= 3) {
+                stockBadgeClass = 'low';
+                stockBadgeText = `Últimas ${p.stock} u.`;
+            } else {
+                stockBadgeClass = 'available';
+                stockBadgeText = 'Disponible';
+            }
+        }
         
         // Define action button based on stock
         const actionButton = hasStock 
-            ? `<button class="btn-add-cart" onclick="addToCart('${p.id}', event)" title="Agregar al Carrito">
+            ? `<button class="btn-add-cart" onclick="addToCart('${p.id}', event, 1)" title="Agregar al Carrito">
                    <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
                </button>`
             : `<button class="btn-ask-item" onclick="askProductDirect('${p.id}', event)" title="Consultar por WhatsApp">
@@ -262,9 +272,8 @@ window.selectCategory = function(category) {
     // Update active tab styling
     const tabs = document.querySelectorAll('#category-tabs .category-tab');
     tabs.forEach(tab => {
-        // Compare text or set default
-        const text = tab.textContent;
-        if ((category === '' && text === 'Todos') || text === category) {
+        const catName = tab.getAttribute('data-category') || '';
+        if (catName === category) {
             tab.classList.add('active');
         } else {
             tab.classList.remove('active');
@@ -278,32 +287,57 @@ function renderCategoryTabs() {
     const tabsContainer = document.getElementById('category-tabs');
     if (!tabsContainer) return;
     
-    let html = `<button class="category-tab ${activeCategory === '' ? 'active' : ''}" onclick="selectCategory('')">Todos</button>`;
+    // Calculate category product counts with case-insensitive normalization
+    const counts = {};
+    state.products.forEach(p => {
+        if (p.category) {
+            const key = p.category.trim().toLowerCase();
+            counts[key] = (counts[key] || 0) + 1;
+        }
+    });
+    const totalCount = state.products.length;
+
+    let html = `
+        <button class="category-tab ${activeCategory === '' ? 'active' : ''}" data-category="" onclick="selectCategory('')">
+            Todos <span class="category-count-badge">${totalCount}</span>
+        </button>
+    `;
     
-    if (state.categories && state.categories.length > 0) {
-        state.categories.forEach(cat => {
-            const isActive = activeCategory === cat ? 'active' : '';
-            html += `<button class="category-tab ${isActive}" onclick="selectCategory('${cat}')">${cat}</button>`;
-        });
-    } else {
-        // Fallback to extraction if not defined
-        const extracted = [...new Set(state.products.map(p => p.category))];
-        extracted.forEach(cat => {
-            if (!cat) return;
-            const isActive = activeCategory === cat ? 'active' : '';
-            html += `<button class="category-tab ${isActive}" onclick="selectCategory('${cat}')">${cat}</button>`;
-        });
-    }
+    // Extract unique categories from products if state.categories is empty or non-matching
+    const productCategories = [...new Set(state.products.map(p => p.category).filter(Boolean))];
+    const categoriesList = (state.categories && state.categories.length > 0)
+        ? [...new Set([...state.categories, ...productCategories])]
+        : productCategories;
+
+    categoriesList.forEach(cat => {
+        const key = cat.trim().toLowerCase();
+        const count = counts[key] || 0;
+        // Only render categories that actually have products
+        if (count > 0) {
+            const isActive = activeCategory && activeCategory.trim().toLowerCase() === key ? 'active' : '';
+            html += `
+                <button class="category-tab ${isActive}" data-category="${cat}" onclick="selectCategory('${cat}')">
+                    ${cat} <span class="category-count-badge">${count}</span>
+                </button>
+            `;
+        }
+    });
     
     tabsContainer.innerHTML = html;
 }
 
 /* ==========================================================================
-   PRODUCT DETAIL MODAL
+   PRODUCT DETAIL MODAL & QUANTITY STATE
    ========================================================================== */
+let modalCurrentProduct = null;
+let modalSelectedQty = 1;
+
 window.viewProductDetails = function(productId) {
     const p = state.products.find(prod => prod.id === productId);
     if (!p) return;
+    
+    modalCurrentProduct = p;
+    modalSelectedQty = 1;
     
     // Render product image or placeholder
     const imageArea = document.querySelector('.modal-image-area');
@@ -338,8 +372,13 @@ window.viewProductDetails = function(productId) {
     const stockQty = document.getElementById('modal-product-stock-qty');
     
     if (hasStock) {
-        stockStatus.textContent = "Disponible (Inmediato)";
-        stockStatus.className = "spec-val available";
+        if (p.stock <= 3) {
+            stockStatus.textContent = "Últimas unidades disponibles";
+            stockStatus.className = "spec-val low";
+        } else {
+            stockStatus.textContent = "Disponible en stock";
+            stockStatus.className = "spec-val available";
+        }
         stockQty.textContent = `${p.stock} unidades en local`;
     } else {
         stockStatus.textContent = "Sin stock físico";
@@ -347,11 +386,19 @@ window.viewProductDetails = function(productId) {
         stockQty.textContent = "Consultar tiempo de entrega por WhatsApp";
     }
     
-    // Set up modal action button
+    // Set up modal action button and quantity selector
     const actionRow = document.getElementById('modal-action-row');
     if (hasStock) {
         actionRow.innerHTML = `
-            <button class="btn btn-primary btn-full-width btn-large" onclick="addToCart('${p.id}'); closeProductModal();">
+            <div class="modal-qty-picker">
+                <span class="modal-qty-label">Cantidad a solicitar:</span>
+                <div class="modal-qty-controls">
+                    <button type="button" class="btn-modal-qty" onclick="changeModalQty(-1)">-</button>
+                    <span class="modal-qty-val" id="modal-qty-display">1</span>
+                    <button type="button" class="btn-modal-qty" onclick="changeModalQty(1)">+</button>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-full-width btn-large" onclick="addModalProductToCart()">
                 <i data-lucide="shopping-cart"></i>
                 <span>Agregar al Carrito</span>
             </button>
@@ -369,6 +416,25 @@ window.viewProductDetails = function(productId) {
     document.getElementById('modal-product-detail').classList.add('active');
 };
 
+window.changeModalQty = function(change) {
+    if (!modalCurrentProduct) return;
+    const max = modalCurrentProduct.stock || 1;
+    const newQty = modalSelectedQty + change;
+    if (newQty >= 1 && newQty <= max) {
+        modalSelectedQty = newQty;
+        const display = document.getElementById('modal-qty-display');
+        if (display) display.textContent = modalSelectedQty;
+    } else if (newQty > max) {
+        showToast(`Stock disponible máximo: ${max} unidades`, 'info');
+    }
+};
+
+window.addModalProductToCart = function() {
+    if (!modalCurrentProduct) return;
+    addToCart(modalCurrentProduct.id, null, modalSelectedQty);
+    closeProductModal();
+};
+
 window.closeProductModal = function(e) {
     document.getElementById('modal-product-detail').classList.remove('active');
 };
@@ -376,7 +442,7 @@ window.closeProductModal = function(e) {
 /* ==========================================================================
    CART OPERATIONS
    ========================================================================== */
-window.addToCart = function(productId, event) {
+window.addToCart = function(productId, event, addQty = 1) {
     if (event) {
         event.stopPropagation(); // Prevent opening modal when clicking plus button
     }
@@ -387,16 +453,26 @@ window.addToCart = function(productId, event) {
     const existing = state.cart.find(item => item.product.id === productId);
     
     if (existing) {
-        if (existing.qty < product.stock) {
-            existing.qty++;
+        const potentialQty = existing.qty + addQty;
+        if (potentialQty <= product.stock) {
+            existing.qty = potentialQty;
+            showToast(`¡Se agregaron +${addQty} u. de ${product.name}!`, 'success');
         } else {
-            alert(`Lo sentimos, el stock disponible para este repuesto es de ${product.stock} unidades.`);
+            const maxAddable = product.stock - existing.qty;
+            if (maxAddable > 0) {
+                existing.qty = product.stock;
+                showToast(`Alcanzado el límite de stock disponible (${product.stock} u.)`, 'info');
+            } else {
+                showToast(`Ya tienes el máximo de stock en tu carrito (${product.stock} u.)`, 'info');
+            }
         }
     } else {
+        const initialQty = Math.min(addQty, product.stock);
         state.cart.push({
             product: product,
-            qty: 1
+            qty: initialQty
         });
+        showToast(`¡${product.name} agregado al carrito!`, 'success');
     }
     
     saveCartToSession();
@@ -404,10 +480,12 @@ window.addToCart = function(productId, event) {
     
     // Optional micro-animation trigger: briefly bounce cart icon in header
     const cartToggle = document.getElementById('cart-toggle');
-    cartToggle.style.transform = 'scale(1.2)';
-    setTimeout(() => {
-        cartToggle.style.transform = 'scale(1)';
-    }, 200);
+    if (cartToggle) {
+        cartToggle.style.transform = 'scale(1.25)';
+        setTimeout(() => {
+            cartToggle.style.transform = 'scale(1)';
+        }, 220);
+    }
 };
 
 window.removeFromCart = function(productId) {
@@ -706,10 +784,41 @@ window.copyModalAlias = function () {
                 textSpan.textContent = '¡Copiado!';
                 setTimeout(() => { textSpan.textContent = orig; }, 2000);
             }
+            showToast(`¡Alias "${alias}" copiado al portapapeles!`, 'success');
         }).catch(err => {
             console.error('Failed to copy alias:', err);
+            showToast(`Alias: ${alias}`, 'info');
         });
     } else {
-        alert(`Alias: ${alias}`);
+        showToast(`Alias: ${alias}`, 'info');
     }
 };
+
+/* ==========================================================================
+   FLOATING TOAST NOTIFICATION HELPER
+   ========================================================================== */
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    const iconName = type === 'success' ? 'check-circle-2' : 'info';
+    toast.innerHTML = `
+        <i data-lucide="${iconName}" class="toast-icon"></i>
+        <span>${message}</span>
+    `;
+    
+    container.appendChild(toast);
+    if (window.lucide) lucide.createIcons();
+    
+    setTimeout(() => {
+        toast.style.animation = 'toastOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 2800);
+}
