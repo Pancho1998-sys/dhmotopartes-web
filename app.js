@@ -236,6 +236,18 @@ function renderCatalog() {
             ? `<img src="${p.image}" class="card-image" alt="${p.name}">` 
             : `<i data-lucide="package" class="card-icon"></i>`;
 
+        const wholesalePrice = parseFloat(p.priceWholesale !== undefined ? p.priceWholesale : p.priceDiscount) || 0;
+        const hasWholesale = wholesalePrice > 0 && wholesalePrice < p.price;
+        const wholesaleHtml = hasWholesale ? `
+            <div class="card-wholesale-box">
+                <span class="wholesale-price-badge">
+                    <i data-lucide="tag" style="width:11px; height:11px; vertical-align:middle; margin-right:3px;"></i>
+                    Mayorista: <strong>${currency}${wholesalePrice.toFixed(2)}</strong>
+                </span>
+                <span class="wholesale-min-note">(a partir de 5 unidades)</span>
+            </div>
+        ` : '';
+
         html += `
             <div class="product-card" onclick="viewProductDetails('${p.id}')">
                 <div class="card-image-wrapper">
@@ -250,6 +262,7 @@ function renderCatalog() {
                         <div class="card-price-area">
                             <span class="price-label">Precio</span>
                             <span class="card-price">${currency}${p.price.toFixed(2)}</span>
+                            ${wholesaleHtml}
                         </div>
                         ${actionButton}
                     </div>
@@ -362,11 +375,17 @@ window.viewProductDetails = function(productId) {
     
     const currency = state.settings.currency || '$';
     const hasStock = p.stock > 0;
+    const wholesalePrice = parseFloat(p.priceWholesale !== undefined ? p.priceWholesale : p.priceDiscount) || 0;
     
     document.getElementById('modal-product-sku').textContent = `SKU: ${p.sku}`;
     document.getElementById('modal-product-title').textContent = p.name;
     document.getElementById('modal-product-category').textContent = p.category;
-    document.getElementById('modal-product-price').textContent = `${currency}${p.price.toFixed(2)}`;
+    
+    let priceText = `${currency}${p.price.toFixed(2)}`;
+    if (wholesalePrice > 0 && wholesalePrice < p.price) {
+        priceText += ` (Minorista) / ${currency}${wholesalePrice.toFixed(2)} (Mayorista a partir de 5 un.)`;
+    }
+    document.getElementById('modal-product-price').textContent = priceText;
     
     const stockStatus = document.getElementById('modal-product-stock-status');
     const stockQty = document.getElementById('modal-product-stock-qty');
@@ -539,9 +558,33 @@ function updateCartUI() {
     document.getElementById('btn-checkout').disabled = false;
     let html = '';
     state.cart.forEach(item => {
-        const itemTotal = item.product.price * item.qty;
+        const retailPrice = item.product.price;
+        const wholesalePrice = parseFloat(item.product.priceWholesale !== undefined ? item.product.priceWholesale : item.product.priceDiscount) || 0;
+        const hasWholesaleOption = wholesalePrice > 0 && wholesalePrice < retailPrice;
+        const isWholesaleActive = item.qty >= 5 && hasWholesaleOption;
+        const unitPrice = isWholesaleActive ? wholesalePrice : retailPrice;
+        const itemTotal = unitPrice * item.qty;
+
         totalQty += item.qty;
         totalPrice += itemTotal;
+
+        let priceDisplayHtml = `<span class="cart-item-price">${currency}${itemTotal.toFixed(2)}</span>`;
+        if (isWholesaleActive) {
+            priceDisplayHtml = `
+                <div style="text-align: right;">
+                    <span class="cart-item-price">${currency}${itemTotal.toFixed(2)}</span>
+                    <div><span class="cart-wholesale-badge"><i data-lucide="sparkles" style="width:10px; height:10px;"></i> Mayorista</span></div>
+                </div>
+            `;
+        } else if (hasWholesaleOption) {
+            const needed = 5 - item.qty;
+            priceDisplayHtml = `
+                <div style="text-align: right;">
+                    <span class="cart-item-price">${currency}${itemTotal.toFixed(2)}</span>
+                    <div class="cart-wholesale-hint">💡 Faltan ${needed} un. para mayorista (${currency}${wholesalePrice.toFixed(2)})</div>
+                </div>
+            `;
+        }
         
         html += `
             <div class="cart-item">
@@ -554,7 +597,7 @@ function updateCartUI() {
                             <span class="qty-val">${item.qty}</span>
                             <button class="btn-qty" onclick="changeCartQty('${item.product.id}', 1)">+</button>
                         </div>
-                        <span class="cart-item-price">${currency}${itemTotal.toFixed(2)}</span>
+                        ${priceDisplayHtml}
                     </div>
                 </div>
                 <button class="btn-remove-item" onclick="removeFromCart('${item.product.id}')" title="Eliminar">
@@ -590,10 +633,16 @@ window.checkoutWhatsApp = function() {
     
     let total = 0;
     state.cart.forEach(item => {
-        const itemTotal = item.product.price * item.qty;
+        const retailPrice = item.product.price;
+        const wholesalePrice = parseFloat(item.product.priceWholesale !== undefined ? item.product.priceWholesale : item.product.priceDiscount) || 0;
+        const isWholesaleActive = item.qty >= 5 && wholesalePrice > 0 && wholesalePrice < retailPrice;
+        const unitPrice = isWholesaleActive ? wholesalePrice : retailPrice;
+        const itemTotal = unitPrice * item.qty;
         total += itemTotal;
+
+        const wsTag = isWholesaleActive ? ' - _Mayorista (5+ un.)_' : '';
         message += `• *${item.qty}x* ${item.product.name} [${item.product.sku}]\n`;
-        message += `  _Precio: ${currency}${item.product.price.toFixed(2)} c/u_ -> *${currency}${itemTotal.toFixed(2)}*\n\n`;
+        message += `  _Precio: ${currency}${unitPrice.toFixed(2)} c/u${wsTag}_ -> *${currency}${itemTotal.toFixed(2)}*\n\n`;
     });
     
     const payText = state.paymentMethod === 'qr' 
