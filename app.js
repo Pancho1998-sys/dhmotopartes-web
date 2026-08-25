@@ -32,12 +32,35 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
     
+    // Check and update store open/closed status dynamically (08:00 - 21:00 hs)
+    updateStoreStatus();
+    setInterval(updateStoreStatus, 60000);
+    
     // Load cart from sessionStorage if available
     loadCartFromSession();
     
     // Fetch products from python server
     fetchCatalog();
 });
+
+function updateStoreStatus() {
+    const statusPill = document.querySelector('.store-status-pill');
+    if (!statusPill) return;
+
+    const now = new Date();
+    const hour = now.getHours();
+    
+    // Business hours: 08:00 to 21:00 hs
+    const isOpen = hour >= 8 && hour < 21;
+
+    if (isOpen) {
+        statusPill.classList.remove('closed');
+        statusPill.innerHTML = `<span class="pulse-dot"></span> Abierto`;
+    } else {
+        statusPill.classList.add('closed');
+        statusPill.innerHTML = `<span class="pulse-dot"></span> Cerrado (08:00 - 21:00 hs)`;
+    }
+}
 
 async function fetchCatalog() {
     // Leer el ID de la tienda desde la URL (ej: misistema.com/catalogo?store=uuid-del-negocio)

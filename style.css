@@ -1758,6 +1758,13 @@ button {
     color: var(--emerald-green);
     letter-spacing: 0.3px;
     text-transform: uppercase;
+    transition: var(--transition-smooth);
+}
+
+.store-status-pill.closed {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: var(--rose-red);
 }
 
 .pulse-dot {
@@ -1767,6 +1774,12 @@ button {
     border-radius: 50%;
     box-shadow: 0 0 8px var(--emerald-green);
     animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.store-status-pill.closed .pulse-dot {
+    background-color: var(--rose-red);
+    box-shadow: 0 0 8px var(--rose-red);
+    animation: none;
 }
 
 @keyframes pulseGlow {
