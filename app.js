@@ -381,11 +381,24 @@ window.viewProductDetails = function(productId) {
     document.getElementById('modal-product-title').textContent = p.name;
     document.getElementById('modal-product-category').textContent = p.category;
     
-    let priceText = `${currency}${p.price.toFixed(2)}`;
-    if (wholesalePrice > 0 && wholesalePrice < p.price) {
-        priceText += ` (Minorista) / ${currency}${wholesalePrice.toFixed(2)} (Mayorista a partir de 5 un.)`;
+    document.getElementById('modal-product-price').textContent = `${currency}${p.price.toFixed(2)}`;
+    
+    const wholesaleBox = document.getElementById('modal-wholesale-box');
+    if (wholesaleBox) {
+        if (wholesalePrice > 0 && wholesalePrice < p.price) {
+            wholesaleBox.style.display = 'flex';
+            wholesaleBox.innerHTML = `
+                <span class="modal-wholesale-tag">
+                    <i data-lucide="tag" style="width:12px; height:12px; vertical-align:middle; margin-right:4px;"></i>
+                    Mayorista: <strong>${currency}${wholesalePrice.toFixed(2)}</strong>
+                </span>
+                <span class="modal-wholesale-subtext">(a partir de 5 un.)</span>
+            `;
+        } else {
+            wholesaleBox.style.display = 'none';
+            wholesaleBox.innerHTML = '';
+        }
     }
-    document.getElementById('modal-product-price').textContent = priceText;
     
     const stockStatus = document.getElementById('modal-product-stock-status');
     const stockQty = document.getElementById('modal-product-stock-qty');
