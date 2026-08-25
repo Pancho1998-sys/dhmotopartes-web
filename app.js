@@ -405,6 +405,18 @@ window.viewProductDetails = function(productId) {
         stockQty.textContent = "Consultar tiempo de entrega por WhatsApp";
     }
     
+    // Set description if available
+    const descRow = document.getElementById('modal-product-desc-row');
+    const descText = document.getElementById('modal-product-desc');
+    if (descRow && descText) {
+        if (p.description && p.description.trim()) {
+            descText.textContent = p.description;
+            descRow.style.display = 'flex';
+        } else {
+            descRow.style.display = 'none';
+        }
+    }
+    
     // Set up modal action button and quantity selector
     const actionRow = document.getElementById('modal-action-row');
     if (hasStock) {
